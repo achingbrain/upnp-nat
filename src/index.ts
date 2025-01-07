@@ -80,6 +80,7 @@
  * - <http://tools.ietf.org/html/draft-cheshire-nat-pmp-03>
  */
 
+import { PCPGateway } from './pcp/gateway.js'
 import { PMPGateway } from './pmp/gateway.js'
 import { UPnPClient } from './upnp/index.js'
 import type { AbortOptions } from 'abort-error'
@@ -139,6 +140,31 @@ export interface MapPortOptions extends GlobalMapPortOptions, AbortOptions {
    * @default ''
    */
   remoteHost?: string
+
+  /**
+   * The protocol the port uses
+   *
+   * @default 'TCP'
+   */
+  protocol?: Protocol
+}
+
+export interface PCPMapPortOptions extends GlobalMapPortOptions, AbortOptions {
+  clientAddress: string
+
+  /**
+   * The suggested external port to map - best effort as may already be mapped on the PCP server to a different client
+   *
+   * @default localPort
+   */
+  suggestedExternalPort?: number
+
+  /**
+   * The suggested external ip address to map - best effort as the address may not be available on the PCP server
+   *
+   * @default ''
+   */
+  suggestedExternalAddress?: string
 
   /**
    * The protocol the port uses
@@ -293,4 +319,11 @@ export interface PMPNAT {
  */
 export function pmpNat (ipAddress: string, options: GlobalMapPortOptions = {}): Gateway {
   return new PMPGateway(ipAddress, options)
+}
+
+/**
+ * Create a PCP port mapper
+ */
+export function pcp (ipAddress: string, options: GlobalMapPortOptions = {}): Gateway {
+  return new PCPGateway(ipAddress, options)
 }
